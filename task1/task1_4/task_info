@@ -1,0 +1,30 @@
+Write dynamic library with function hello_from_dyn_runtime_lib() and load it into hello.c using dlopen(3). Tell what's happened.
+
+solving:
+gcc -c means compiling without linking
+
+Stages of work:
+1) gcc -c -fPIC dynhello.c || -fPIC <=> making code position independent (?)
+2) gcc -shared -o dynhello.so dynhello.o
+3) gcc hello.c
+
+Stages of compilation:
+1) Preprocessing (working with #includes, #defines, etc..)
+2) Compilation (c=>assembly)
+3) Assembling (assembly=>object file. Object files include machine code, but its not enough for program. In general, its impossible to execute object file)
+4) Linking (getting object files together so they can execute. On this stage we work with static libraries)
+5) Execution (putting source code into memory and calling OS to tell processor to execute it. On this stage we work with dynamic labriries)
+OS creates a process that is from time to time is executed by processor; 
+
+Compiling: from LX to L(X-1) (from "more" human language to "more" computer language)
+Linking: getting various object files and combination of them into one executable
+
+Static library is an archive of executable files.
+Dynamic library can be connected to file during execution
+Dynamic libraries can be used in many programs at the same file. Static library is used only at 1 program
+at a time. 
+This is why dynamic libraries have second name (shared libraries) <= (here can be a mistake; but in general, they're same)
+
+Bonus info:
+RTLD_LAZY means lazy binding; it means that name is resolved at the moment when it's executed for the first time
+RTLD_NOW means that names are resolved instantly

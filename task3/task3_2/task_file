@@ -1,0 +1,35 @@
+Create a program, that:
+r - "redirect"
+first char: c - create, s - show, d - delete, r - redirect
+second char - d - directory, f - file, s - symbolic link, h - hard link, r - rights
+a. creates folder				-cd
+b. list everything what lies in folder		-sd
+c. delete folder (recursively)			-dd
+d. create file					-cf
+e. show everything in file			-sf
+f. delete file					-df
+g. create symbolic link on file			-cs
+h. show whats in symbolic link			-ss
+i. show whats in file (from symbolic link)	-rs
+j. delete symbolic link on file			-ds
+k. create hard link on file			-ch
+l. delete hard link on file			-dh
+m. show amount of hard links and rights on file	-sr
+n. change rights				-cr
+
+things like mkdir, rmdir, etc are syscalls
+
+The sticky bit (S_ISVTX) on a directory means that a file in that
+directory can be renamed or deleted only by the owner of the
+file, by the owner of the directory, and by a privileged process.
+
+inode is a structure that stores metadata about file - rights, name, etc...
+dentry - direction entry - is a representation of direction in linux
+
+dentry, inode, etc..
++ improve
+there's a good function perror, what does it do?
+perror is a function that prints system errors based on variable errno
+
+test on /proc/[PID]
+Tested: can list dir

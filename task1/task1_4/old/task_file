@@ -1,0 +1,34 @@
+Write static library with print function and watch if its executable file has any unresolved symbols
+Where's the code of this function?
+
+solving:
+1. created a c file with library
+2. created header file
+3. compilation of library files: gcc -c libhello.c -o libhello.o
+4. created static library with command ar rcs lib_mylib.a lib_mylib.o; on this point with have library 
+5. compiling hello.c: gcc -c hello.c -o hello.o
+6. linking library gcc -o hello hello.o -L. lib_mylib.a
+Then running "hello" is possible.
+
+a) hello_from_static_lib is resolved. Its because we linked object file with -L. flag.
+Symbol "hello_from_static_lib" has -T flag in nm which means name is in code section.
+b) Code is in memory (???)
+
+gcc -c means compiling without linking
+
+Stages:
+1) Preprocessing (working with #includes, #defines, etc..)
+2) Compilation (from c to assembly)
+3) Assembling (from assembly to object file. Object files includes machine code, but its not enough for program)
+4) Linking (getting object files together so they can execute. On this stage we work with static libraries)
+5) Execution (putting source code into memory and calling OS to tell processor to execute it. On this stage we work with dynamic labriries)
+OS creates a process that is from time to time is executed by processor; 
+
+Compiling: from LX to L(X-1) (from "more" human language to "more" computer language)
+Linking: getting various object files and combination of them into one executable
+
+Static library is an archive of executable files.
+Dynamic library can be connected to file during execution
+Dynamic libraries can be used in many programs at the same file. Static library is used only at 1 program
+at a time. 
+

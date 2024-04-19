@@ -1,0 +1,50 @@
+SUID bit is a bit that means that file is executed with the same rights as user.
+Quote from redhat.com: 
+
+Commonly noted as SUID, the special permission for the user access level has a single function: A file with SUID always executes as the user who owns the file, regardless of the user passing the command. If the file owner doesn't have execute permissions, then use an uppercase S here.
+
+What is user id and efficient user id?
+
+
+1. Create file with rights "reading only for owner"
+Commands:
+touch testfile.txt
+chmod 4700 a.out
+
+2. Write a program that: 
+prints everything from this file
+Real and efficient identifier of user
+
+as example, id command can be used in terminal and syscall getuid/geteuid to get them in program
+
+3. Launch program from my user (cursed_nerd) and other, then add SUID bit and repeat
+If i launch via my user I get output: <file>\n1000\n1000
+1000 is my user id (user id of cursed_nerd)
+If i launch via other user (jack) i get output other output: permission denied
+
+Explaination: when there's no SUID bit on a.out, i can easily run my program via my user
+(because i have rights to do so, -rwx------- is enough for me to launch, probably
+---x------ is enough. x <=> right to execute. First x means that creator of file (my user, cursed_nerd) has right to do so)
+When I try to launch program via other user (jack) I don't have permissions to do so. 
+
+When I add SUID bit on a.out, I get other result - userid is 1001 (jack's id) and my
+efficient id is 1000 (cursed_nerd). This is how suid bit works - it gives rights to launch file as creator of file 
+
+
+What is user in general?
+User is a substance that can be found in many OS, including linux.
+List of all of users can be found in /etc/passwd
+
+In my system there are much more users than me (cursed_nerd) and jack
+/etc/passwd is a plain text-based database that contains information for all user accounts on the system. 
+Each line in /etc/passwd contains:
+Username. It can be changed (unlike uid)
+Pasword. In modern systems password isn't stored in /etc/passwd file but in /etc/shadow file (which cannot be read without root rights)
+UID.
+GID. group id
+GECOS/full name. Stores bonus info about user (such as phone number)
+Home directory. /root for root, /home/cursed_nerd for cursed_nerd, other for other
+login shell. By default, its bash.
+
+Why are ther so many users in /etc/passwd?
+They are used for separation of privileges. I guess, its for security.

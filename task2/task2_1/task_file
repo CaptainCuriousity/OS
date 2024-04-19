@@ -1,0 +1,18 @@
+1) load a.out with strace
+2) why's amount of syscalls so big?
+
+execve - execute program
+change data segment size
+access - access a connection on socket
+
+3) sys call to write "Hello world" (its syscall write)
+4) what is write?
+
+write gets file descriptor (int fd), buffer (void*), and size_t count.
+0 is stdin, 1 is stdout, 2 is stderr.
+
+5) use write instead of printf - done
+
+6) обёртку
+
+7) strace wget kernel.org. Get statistics of syscalls used by child process

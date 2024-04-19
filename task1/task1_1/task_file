@@ -1,0 +1,6 @@
+1. 
+a) Executable file was generated.
+b) Unresolved symbols are puts@GLIBC_2.2.5 and __libc_start_main@GLIBC_2.34
+Unresolved symbols are such symbols that have declaration but not definition
+c) dependencies of hello program: linux-vdso.so, libc.so, /lib64/ld-linux_x86-64
+d) Executed ( -_- )

@@ -1,0 +1,112 @@
+Структура адресного пространства.
+a. Напишите программу, которая создает переменные и выводит их адреса:
+	i. локальные в функции;
+	ii. статические в функции;
+	iii. константы в функции;
+	iv. глобальные инициализированные;
+	v.глобальные неинициализированные;
+	vi. глобальные константы.
+
+b. Сопоставьте адреса переменных с областями адресного пространства из
+соответствующего /proc/<pid>/maps. Объясните увиденное.
+
+c. Используя утилиту nm (или readelf) определите в каких секциях
+находятся выделенные переменные.
+
+d. Напишите функцию, которая создает и инициализирует локальную
+переменную и возвращает ее адрес. Прокомментируйте результат и
+дайте оценку происходящему.
+
+e. Напишите функцию, которая:
+	i. выделяет на куче буфер (например, размером 100 байт);
+	ii.записывает в него какую-либо фразу (например, hello world);
+	iii. выводит содержимое буфера;
+	iv. освобождает выделенную память;
+	v. снова выводит содержимое буфера;
+	vi. выделяет еще один буфер;
+	vii. записывает в них какую-либо фразу (например, hello world);
+	viii. выводит содержимое буфера;
+	ix. перемещает указатель на середину буфера;
+	x. освобождает память по этому указателю.
+	xi. выводит содержимое буфера;
+
+f. Прокомментируйте работу предыдущего пункта.
+
+g. Заведите переменную окружения. (OMP_NUM_THREADS как пример)
+
+h. Добавьте в вашу программу код, который:
+	i. распечатывает ее значение;
+	ii. изменяет его значение;
+	iii. повторно распечатывает ее значение.
+
+i. Запустите вашу программу и убедитесь что переменная окружения
+имеет требуемое значение.
+
+j. Выведите значение переменной окружения после того как ваша
+программа завершилась.
+
+k. Объясните произошедшее.
+
+Progress.
+
+a_glob, b_glob (initialized), c_glob(const initialized)
+a - var
+b - static
+c - const
+
+a: done
+b: Here I get information on how different data is stored in process memory.
+
+For this reason, script "read_map.sh" was created
+This scripts simply printf info from /proc/[pid]/maps
+/proc/[pid]/maps stores information on how its stored .
+It maps virtual memory
+
+
+Usual local and const local are stored in stack
+
+This somewhere else is connected to file
+Local static, global variables are stored somewhere else ()
+Global const is stored somehere else, but in segment locked for writing.
+
+q1: what is this somewhere else?
+
+c: using nm
+
+according to nm,
+a_glob and b are in BSS data section, which contains uninit data
+b_glob is initialized section 
+c_glob in read-only initialized section
+a and c variables are not seen
+
+d: function was created. 
+Result: nil returned as pointer to variable. It means, that object does not exist in memory after its deletion.
+Inside of function, variable exists and is printed.
+What happened?
+When I created variable, one of two things could happen:
+1. Some register, rax for example, could be initialized with value of this variable
+After finish of function, rax could be restored.
+2. It could go into stack. After leaving function, stack pointer could be moved back.
+
+e: 
+First of all, "malloced" memory is stored in heap.
+1. I create string
+2. string is filled
+3. string is printed
+4. freeing. After freeing instead of text i see something random
+
+5. Repeating, but with increase of buffer pointer.
+
+f: related to e
+
+Local variables.
+g. Done (OMP_NUM_THEADS)
+h:
+i:
+Main conclusion: environment variables are local to process.
+Subprocesses seem to have no right to change env vars
+
+
+k: what happened and how local vars work?
+
+

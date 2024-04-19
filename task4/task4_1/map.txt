@@ -1,0 +1,22 @@
+638e6bf82000-638e6bf83000 r--p 00000000 103:06 8388633                   /home/cursed_nerd/nsu/os/task4/task4_1/a.out
+638e6bf83000-638e6bf84000 r-xp 00001000 103:06 8388633                   /home/cursed_nerd/nsu/os/task4/task4_1/a.out
+638e6bf84000-638e6bf85000 r--p 00002000 103:06 8388633                   /home/cursed_nerd/nsu/os/task4/task4_1/a.out
+638e6bf85000-638e6bf86000 r--p 00002000 103:06 8388633                   /home/cursed_nerd/nsu/os/task4/task4_1/a.out
+638e6bf86000-638e6bf87000 rw-p 00003000 103:06 8388633                   /home/cursed_nerd/nsu/os/task4/task4_1/a.out
+638e6cf0c000-638e6cf2d000 rw-p 00000000 00:00 0                          [heap]
+7a2ac9aa2000-7a2ac9aa5000 rw-p 00000000 00:00 0 
+7a2ac9aa5000-7a2ac9ac9000 r--p 00000000 103:06 6032716                   /usr/lib/libc.so.6
+7a2ac9ac9000-7a2ac9c24000 r-xp 00024000 103:06 6032716                   /usr/lib/libc.so.6
+7a2ac9c24000-7a2ac9c79000 r--p 0017f000 103:06 6032716                   /usr/lib/libc.so.6
+7a2ac9c79000-7a2ac9c7d000 r--p 001d3000 103:06 6032716                   /usr/lib/libc.so.6
+7a2ac9c7d000-7a2ac9c7f000 rw-p 001d7000 103:06 6032716                   /usr/lib/libc.so.6
+7a2ac9c7f000-7a2ac9c89000 rw-p 00000000 00:00 0 
+7a2ac9cbb000-7a2ac9cbc000 r--p 00000000 103:06 6032691                   /usr/lib/ld-linux-x86-64.so.2
+7a2ac9cbc000-7a2ac9ce3000 r-xp 00001000 103:06 6032691                   /usr/lib/ld-linux-x86-64.so.2
+7a2ac9ce3000-7a2ac9cee000 r--p 00028000 103:06 6032691                   /usr/lib/ld-linux-x86-64.so.2
+7a2ac9cee000-7a2ac9cf0000 r--p 00032000 103:06 6032691                   /usr/lib/ld-linux-x86-64.so.2
+7a2ac9cf0000-7a2ac9cf2000 rw-p 00034000 103:06 6032691                   /usr/lib/ld-linux-x86-64.so.2
+7fff158c0000-7fff158e1000 rw-p 00000000 00:00 0                          [stack]
+7fff159c6000-7fff159ca000 r--p 00000000 00:00 0                          [vvar]
+7fff159ca000-7fff159cc000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]

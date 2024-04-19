@@ -1,0 +1,6 @@
+dentry is a structure, that is created while working with files. Stores a lot of info,
+most important are inode*, name
+
+inode stores metadata about file, such as func* (function to read/write)
+
+returned value

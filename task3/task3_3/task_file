@@ -1,0 +1,37 @@
+Write a program that prints /proc/[pid]/pagemap
+
+What is pagemap?
+Quote from kernel.org: pagemap is a set of interfaces which give userspace programs an opportunity to 
+examine the page tables and related info by reading files in /proc
+
+This file shows mapping of each of the process's virtual pages into physical page frames or swap area
+It contains one 64 bit value for each page:
+
+Bit	What means
+63 	if set, page is present in RAM
+62	if set, page is present in swap space
+61	if set, page is file-mapped or a shared anonymous page
+60-58	zero
+57	write-protected via userfaultfd
+56	page is exclusively mapped
+55	soft-dirty ()
+54-0	If the page is present in RAM (bit 63), then these
+        bits provide the page frame number, which can be
+        used to index /proc/kpageflags and
+        /proc/kpagecount.  If the page is present in swap
+        (bit 62), then bits 4–0 give the swap type, and
+        bits 54–5 encode the swap offset.
+
+man 5 proc - info about processes
+The soft-dirty is a bit on a PTE which helps to track which pages a task
+writes to. In order to do this tracking one should
+
+Bits 0-54 page frame number (PFN) if present
+Bits 0-4 swap type if swapped
+Bits 5-54 swap offset if swapped
+Bit 55 pte is soft-dirty (see Documentation/admin-guide/mm/soft-dirty.rst)
+Bit 56 page exclusively mapped (since 4.2)
+Bits 57-60 zero
+Bit 61 page is file-page or shared-anon (since 3.5)
+Bit 62 page swapped
+Bit 63 page present

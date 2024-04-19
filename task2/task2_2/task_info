@@ -1,0 +1,8 @@
+1. How syscall() works?
+2. Write "Hello world" without syscalls
+
+1. How syscall() works
+syscall saves CPU registers, calls system call, restores CPU registers. 
+syscall() function is a wrapper function for indirect system calls.
+
+2. To do this, I must use assembly or _syscall() function. 
