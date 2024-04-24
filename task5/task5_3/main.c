@@ -31,16 +31,16 @@ void createProc(int local) {
 			printf("\tGlobal: address = %p, content = %d\n", &global, global);
 			printf("\tLocal: address = %p, content = %d\n", &local, local);
 
-			printf("Child process info: END\n\n\n");
-			sleep(100);
+			printf("\tChild process commits harakiri...\n");
 			exit(5);
 		default:
 			printf("\n\nParent process info: START\n\n");
 			printf("\tGlobal: address = %p, content = %d\n", &global, global);
 			printf("\tLocal: address = %p, content = %d\n", &local, local);
-
+			
+			// sleeping to work with zombie child	
+			sleep(100);
 			// parent process waits until the end of execution of child process
-			sleep(20);
 			wait(&tmp);
 			printf("\texit code of child = %d\n", WEXITSTATUS(tmp));
 

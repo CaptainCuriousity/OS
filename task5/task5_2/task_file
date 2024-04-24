@@ -6,3 +6,14 @@ b. Объясните какую проблему решает данное со
 c. Может ли родительский процесс оказаться в состоянии зомби? Если да,
 то что в этом случае произойдет с дочерним? Смоделируйте эту
 ситуацию.
+
+Theory: zombie process are killed processes that are just stored in table of
+processes with returned value. When parent process needs it, they take returned value
+and "bury" it. Thanks to zombie processes, there are no so many orphan processes.
+
+a. Done
+b. It gives the parent process time to get returned value from child process.
+c. Yes, because every process (except for some initializing processes) are child processes
+to the others, and for this reason they can be zombies.
+
+After expirement, child process of zombie worked as a normal process.

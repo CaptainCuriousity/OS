@@ -11,7 +11,20 @@ a. Напишите программу, которая:
 	ix. в родительском процессе делает sleep(30);
 	x.в дочернем процессе завершается с кодом “5” (exit(2)).
 	xi. в родительском процессе дожидается завершения дочернего,
-	вычитывает код завершения и выводит причину завершения и кодзавершения если он есть. В каком случае кода завершения не будет?
+	вычитывает код завершения и выводит причину завершения и кодзавершения если он есть. 
+
+В каком случае кода завершения не будет?
+
+From manual:
+All of these system calls are used to wait for state changes in a
+       child of the calling process, and obtain information about the
+       child whose state has changed.  A state change is considered to
+       be: the child terminated; the child was stopped by a signal; or
+       the child was resumed by a signal.  In the case of a terminated
+       child, performing a wait allows the system to release the
+       resources associated with the child; if a wait is not performed,
+       then the terminated child remains in a "zombie" state (see NOTES
+       below).
 
 b. Объясните результаты работы программы.
 c. Понаблюдайте за адресными пространствами в procfs.
@@ -19,14 +32,34 @@ d. Понаблюдайте за состояниями процесса в proc
 
 Progress.
 a. Done
-b. What happened?
+b. 
+In main function: global and local variables are stored in stack
+
+Now I "enter" parent process:
+In parent process global var is mapped to executable file
+local var is mapped to stack, but to other position than in function main
+(which is quite obvious, because local var is sent via value)
+
+Now I "enter" child process:
+Firstly, the same values and addresses are printed. Secondly, the variables are changed. Thirdly, they are printed again.
+
+I "exit" child process:
+Then we can see the same variables in the same addresses, but values are the same.
+
+It means that virtual memory addresses in the child process are mapped to other frame of RAM.
+If stack was shared, then the changed variables would've been changed in main parent process, too.
+
+Then wait(&tmp) waits until child process finishes its execution. After that tmp gets value
+of returned value of child process.
+
+Before execution of createProc function global and local variable were stored in the same
+segment.
+
+
 
 what fork() returns:
 (pid_t)0 in child process
 getpid() in parent process
 
-c, d will be done with teacher
-
-
-c. /proc/pid/map:
-d. 
+c,d: The only useful info I've got: after child process stops execution, it dies (lol)
+S+ means process is running (probably)

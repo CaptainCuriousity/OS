@@ -12,35 +12,40 @@ void printVars(int globalVar, int localVar) {
 
 void createProc(int local) {
 	pid_t pid;
+	pid_t pid2;
 	int tmp;
 	switch(pid=fork()) {
 		case -1:
 			perror("can't create new process\n");
 			exit(-1);
 		case 0:
-			printf("\n\nChild process info: START\n");
-			printf("\tpid = %d, parent pid = %d\n", getpid(), getppid());
+			printf("\n\nFirst generation child (will be zombified)");
 
-			printf("\tGlobal: address = %p, content = %d\n", &global, global);
-			printf("\tLocal: address = %p, content = %d\n", &local, local);
-
-			local = 12345;
-			global = 12345;
-			
-			printf("\tChanged variables in child process\n");
-			printf("\tGlobal: address = %p, content = %d\n", &global, global);
-			printf("\tLocal: address = %p, content = %d\n", &local, local);
-
-			printf("Child process info: END\n\n\n");
-			sleep(100);
+			switch(pid2=fork())
+			{
+				case -1:
+					perror("Can't create new process\n");
+					exit(-1);
+				case 0:
+					printf("\n\nSecond generation child\n\n");
+					printf("Pid of 2nd generation: %d\n", getpid());
+					sleep(50);
+					break;
+				default:
+					sleep(1);
+					printf("First generation child happily commits suicide!");
+					exit(10);
+					break;		
+			}
 			exit(5);
 		default:
 			printf("\n\nParent process info: START\n\n");
 			printf("\tGlobal: address = %p, content = %d\n", &global, global);
 			printf("\tLocal: address = %p, content = %d\n", &local, local);
-
+			
+			// sleeping to work with zombie child	
+			sleep(100);
 			// parent process waits until the end of execution of child process
-			sleep(20);
 			wait(&tmp);
 			printf("\texit code of child = %d\n", WEXITSTATUS(tmp));
 
