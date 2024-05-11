@@ -1,65 +1,90 @@
+#define _GNU_SOURCE
 #include <stdio.h>
+#include <err.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/wait.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <sched.h>
+#include <linux/sched.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <sys/syscall.h>
+#include <sys/utsname.h>
+#include <string.h>
 
-int global = 123;
+#define SEG_SIZE 0x1000
+#define DEFAULT_DEPTH 10
 
-void printVars(int globalVar, int localVar) {
-	printf("global: address = %p, content = %d\n", &globalVar, globalVar);
-	printf("local: address = %p, content = %d\n", &localVar, localVar);
+long long sp;
+int fd;
+
+void* createStack() {
+	fd = open("memory", O_RDWR | O_CREAT, 0660);
+	if (fd == -1) {
+		perror("open");
+		exit(EXIT_FAILURE);
+	}
+
+	ftruncate(fd, 0x0);
+	ftruncate(fd, SEG_SIZE);
+	void* stack = mmap(
+			NULL,
+		       	SEG_SIZE, 
+			PROT_READ | PROT_WRITE, 
+			MAP_SHARED, 
+			fd, 
+			0
+	);
+
+	if (stack == MAP_FAILED) {
+		perror("Stack failed");
+		exit(EXIT_FAILURE);
+	}
+
+	sp = (long long)stack;
+	return stack;
 }
 
-void createProc(int local) {
-	pid_t pid;
-	int tmp;
-	switch(pid=fork()) {
-		case -1:
-			perror("can't create new process\n");
-			exit(-1);
-		case 0:
-			printf("\n\nChild process info: START\n");
-			printf("\tpid = %d, parent pid = %d\n", getpid(), getppid());
+void doStackJob(int depth) {
+	const char hello_world[] = "Hello World!";
+	if (depth <= 0)
+		return;
 
-			printf("\tGlobal: address = %p, content = %d\n", &global, global);
-			printf("\tLocal: address = %p, content = %d\n", &local, local);
+	printf("Current stack position: %p\n", sp);
 
-			local = 12345;
-			global = 12345;
-			
-			printf("\tChanged variables in child process\n");
-			printf("\tGlobal: address = %p, content = %d\n", &global, global);
-			printf("\tLocal: address = %p, content = %d\n", &local, local);
+	char* charred_stack = (char*)sp;
 
-			printf("\tChild process commits harakiri...\n");
-			exit(5);
-		default:
-			printf("\n\nParent process info: START\n\n");
-			printf("\tGlobal: address = %p, content = %d\n", &global, global);
-			printf("\tLocal: address = %p, content = %d\n", &local, local);
-			
-			// sleeping to work with zombie child	
-			sleep(100);
-			// parent process waits until the end of execution of child process
-			wait(&tmp);
-			printf("\texit code of child = %d\n", WEXITSTATUS(tmp));
+	for (int i = 0; i < 13; ++i)
+		charred_stack[i] = hello_world[i];
 
-			printf("Variables after execution of child\n");
-			printf("\tGlobal: address = %p, content = %d\n", &global, global);
-			printf("\tLocal: address = %p, content = %d\n", &local, local);
-			printf("\n\nParent process info: END\n\n");
-			break;
-	}
+	sp += strlen(hello_world);
+	
+	void* return_address = __builtin_extract_return_addr(__builtin_return_address(0));
+	printf("Return address of doStckJob(%d): %p\n", depth, return_address);
+	printf("Depth: %p\n", &depth);
+	doStackJob(depth - 1);
+	
+}
+
+int entryPointChild(void* stack) {
+	doStackJob(DEFAULT_DEPTH);
+	exit(EXIT_SUCCESS);
+	return 0;
 }
 
 int main() {
-	int local = 1234;
-	printf("Main function info: \n");
-	printVars(global, local);
-	pid_t parent = getpid();
-	printf("pid = %d\n", parent);
-	printf("End of main function info, createProc->\n");
-	createProc(local);
-	sleep(30);
+	void* stack = createStack();
+	void* stack_top = stack + SEG_SIZE;
+
+	printf("Stack: %p, Stack top: %p\n", stack, stack_top);
+
+	pid_t pid = clone(entryPointChild, stack_top, SIGCHLD, NULL);
+	if (pid == -1) {
+		perror("Clone failed");
+		return EXIT_FAILURE;
+	}
+	printf("Pid of cloned process: %d\n", pid);
+	printf("Current pid: %d\n", getpid());
 	return EXIT_SUCCESS;
 }

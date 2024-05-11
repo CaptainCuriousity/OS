@@ -1,0 +1,29 @@
+3. Реализуйте задачу из пункта 2 при помощи мультиплексирования ввода-вывода
+poll(2)/select(2).
+
+poll/select решают проблему предыдущих трёх задач - проблему создания избыточного числа процессов.
+1. Если ядер слишком мало, то это тоже плохо
+2. Не бесконечное количество процессов
+
+Другой вариант - записать список соединений и бегать по ним.
+
+s = socket() <- nonblock regime
+bind(s)
+listen()
+accept() 
+EAGAIN/EWOULDBLOCK - важные для проверки errno
+
+select(..., fds_read, fds_write, fds_exceptions, timeout);
+fds_read - набор дескрипторов, проверяемых на разрешение записи (остальные аналогичено)
+если в течение timeout не произошло нужного события, то произойдёт timeout
+Первый параметр - номер максимального дескриптора + 1.
+Nmax + 1
+
+Cons of usual (from 7.1/7.2) "multiplexing":
+1) Too many processes
+2) Too many zombies (after they stop working)
+
+Difference between select/poll:
+1) Different interface;
+2) select has limits
+3) select can wait in microseconds

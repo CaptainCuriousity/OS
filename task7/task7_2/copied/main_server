@@ -1,0 +1,32 @@
+#include "server.h"
+#include <stdio.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+int main(){
+    while (1) {
+        struct sockaddr_in addr;
+        struct sockaddr_in client;
+        int32_t TCPSocket = createSocket();
+        if (TCPSocket == ERR_FLAG) exit(ERR_FLAG);
+        bzero(&addr, sizeof(addr));
+        assignPort(&addr);
+        int32_t conn = connection(TCPSocket, addr, client);
+        pid_t pid;
+        int tmp;
+        switch (pid = fork()) {
+            case ERR_FLAG:
+                perror("can't create new process\n");
+                exit(-ERR_FLAG);
+            case 0:
+                startServer(conn, client);
+                exit(0);
+            default:
+                wait(&tmp);
+        }
+        close(TCPSocket);
+    }
+    return 0;
+}

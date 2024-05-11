@@ -1,0 +1,15 @@
+#include "client.h"
+#include <strings.h>
+#include <stdlib.h>
+
+int main()
+{
+    struct sockaddr_in addr, client;
+    int32_t TCPSocket = createSocket();
+    if(TCPSocket == ERR_FLAG) exit(ERR_FLAG);
+    bzero(&addr, sizeof(addr));
+    assignPort(&addr);
+    connection(addr, TCPSocket);
+    echo(TCPSocket);
+    close(TCPSocket);
+}

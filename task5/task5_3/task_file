@@ -19,7 +19,28 @@ ii. найдите переменную счетчик, которая испо�
 ограничения рекурсии.
 iii. найдите адреса возврата из функций.
 
-? Запись в файл и синхронизация с файлом - это одно и то же? Или стоит организовать процесс, синхронизирующий
-анонимный регион с файлом?
+there's also some newer clone3(2) syscall, i don't know what it is about...
+What is clone(2)?
+A syscall, has a lot of common with fork(2), but:
+1) It has more options, giving more control to programmer;
+2) Execution continues not from the place it was found, but
+starting from function:
 
+Default information about fork syscall (copied from book):
+1) shares fn's
+2) shares memory
+
+Signature:
+int clone(int (*fn), void *stack, int flag, void * arg, ...(parent_tid, tls, child_tid))
+
+By contrast with fork, this syscalls give more control over what pieces of 
+parent process are shared.
+For example, I can control whether or not the two processes will share virtual address space,
+table of file descriptors, etc.
+
+
+b.
+i. There are 11 hello world in file. 10 are printed manually, 11th is a constant.
+ii. Can be found, and was found
+iii. return address is ~constant
 

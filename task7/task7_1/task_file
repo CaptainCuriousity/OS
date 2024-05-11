@@ -1,0 +1,36 @@
+1. UDP - эхо сервер:
+a. Сделайте UDP-сервер, который принимает данные от клиентов и
+пересылает их обратно клиенту.
+b. Напишите UDP-клиента, для теста UDP-сервера.
+c. Проверьте, что UDP-сервер, работает с несколькими клиентами.
+
+b. netcat is ok as UDP-client. Sadly, author of this code
+isn't ok into sockets..
+
+What is socket?
+Socket is a special file in OS linux.
+Socket listens and waits for client's actions
+Also, they can communicate multiple processes at once
+socket() isn't initialized before bind()/listen()/accept() and other calls.
+
+
+What is socket again?
+Let we have one server and multiple clients. To make this kind of communication,
+we need sockets.
+
+Sockets inside are not shown in the lecture 14
+
+How to work with sockets?
+
+On server side: 
+AF_UNIX - unix domain socket
+bind() binds socket in program with socket of filesystem;
+listen() makes socket start listening
+accept() returns client socket after client does connect()
+read() reads what client "wrote()" and vice versa
+
+On client side:
+connect();
+read() reads what client "wrote()" and vice versa
+
+On the end of program: close() in both programs, for both sockets

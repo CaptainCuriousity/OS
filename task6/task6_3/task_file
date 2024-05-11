@@ -5,3 +5,11 @@ a. Сделайте процесс - эхо сервер на доменном �
 b. Сделайте клиента для взаимодействия.
 c. Убедитесь, что ваш эхо-сервер может взаимодействовать с несколькими
 клиентами
+
+What is unix socket?
+Unix socket is a special file which is used to IPC between multiple processes (more than 2)
+Only three types of sockets are valid for UNIX domain: SOCK_STREAM, SOCK_DGRAM, SOCK_SEQPACKET
+
+Unix domain sockets are similar to internet sockets (from usual programmer's perspective),
+but itstead of communication via network it communicates via kernel.
+
