@@ -1,0 +1,105 @@
+Разберитесь как работает системный вызов ptrace(2) и напишите программу,
+которая породит процесс и выведет все системные вызовы дочернего процесса.
+
+How ptrace works?
+
+ptrace is a syscall that "spies" on another process, gives interface to change its registers and data.
+ptrace works only with one-threaded process. Its interesting to use it on parallel program
+ptrace is mostly used as debugging tool; program "strace" is probably based on ptrace
+
+ptrace(PT_TRACE_ME) - is used to initiate the trace.
+By original, it has this form:
+long ptrace(request, pid, void* addr, void* data)
+pid is id of tracee
+addr and data are arguments that are sometimes needed.
+
+Firstly, a call fork(), then resulting child does ptrace(PT_TRACE_ME)
+ptrace(PT_TRACE_ME) inside: it does... (TODO)
+
+ptrace(PTRACE_SYSCALL, pid, 0, 0)
+Means: restart the stopped tracee, but make tracee to stop on the next
+entry or exit from a system call.
+
+
+ptrace(PTRACE_SETOPTIONS, pid, 0, PTRACE_O_TRACESYSGOOD)
+When delivering system call traps, set 7th bit (<=> deliver SIGTRAP | 0x80).
+It makes job of differentiation of normal traps/syscall traps easier
+
+
+ptrace(PTRACE_PEEKUSER, pid, sizeof(long)*ORIG_RAX)
+ptrace(PTRACE_PEEKUSER, pid, sizeof(long)*RAX)
+A little bit of interesting info about ORIG_RAX and RAX
+ORIG_RAX is used as input value (number of syscall)
+RAX is a place where return value of syscall is stored
+
+After, PTRACE_PEEKUSER means 
+Read a word at offset addr in the tracee's USER area, which holds
+              the registers  and  other  information  about  the  process  (see
+              <sys/user.h>).   The  word  is  returned  as  the  result  of the
+              ptrace() call.   Typically,  the  offset  must  be  word-aligned,
+              though this might vary by architecture.  See NOTES.  (data is ig‐
+              nored; but see NOTES.)
+
+So first string means taking old RAX value (syscall number)
+and second means taking result of a function.
+
+Other used functions: 
+memcpy(buf, argv, argc * sizeof(char*)) - 
+copies argc * sizeof(char*) bytes from argv to buf
+
+
+kill(getpid(), SIGSTOP) - terminates a process with getpid() PID. 
+Its works like this:
+pid > 0 => signal is sent to process with specified pid
+pid = 0 => signal is sent to every process in the process group of the calling process
+pid = -1 => signal is sent to every process, except the ones the calling process has no and 1
+permission to call. Maybe, by calling kill(-1, SIGTERMINAL) or smth like that i can terminate
+the system
+if pid < -1, then sig is sent to every process in the process group whose pid is -pid
+
+In my program, SIGSTOP is used. It means that kill() will stop the process with pid PID
+ 
+getpid() - returns process ID (pid) of the calling process.
+getppid() returns id of the parent of the calling process
+
+execvp(buf[0], buf) - executes program with argv=buf
+execvp("./a.out", argv) means that program compiled program from local folder will
+be executed with parameters from argv
+
+waitpid(pid, &status, 0) - waits for pid, puts its status in status (haha)
+Third argument:
+
+The value of options is an OR of zero or more of the following constants:
+WNOHANG
+
+return immediately if no child has exited.
+
+WUNTRACED
+
+also return if a child has stopped (but not traced via ptrace(2)). Status for traced children which have stopped is provided even if this option is not specified.
+WCONTINUED (since Linux 2.6.10)
+    also return if a stopped child has been resumed by delivery of SIGCONT. 
+(For Linux-only options, see below.)
+
+If status is not NULL, wait() and waitpid() store status information in the int to which it points. This integer can be inspected with the following macros (which take the integer itself as an argument, not a pointer to it, as is done in wait() and waitpid()!): 
+
+
+
+int WIFSTOPPED(int status): return nonzero value if the child process is stopped
+WSTOPSIG(status): return signal number of the signal that caused the child process to stop.
+WIFEXITED(status): returns a nonzero value if the child process terminated with exit/_exit
+
+
+
+
+
+Used constants/variable:
+PT_TRACE_ME
+PTRACE_SYSCALL
+PTRACE_SETOPTIONS
+PTRACE_O_TRACESYSGOOD
+PTRACE_PEEKUSER
+
+SIGSTOP
+
+RAX, ORIG_RAX
